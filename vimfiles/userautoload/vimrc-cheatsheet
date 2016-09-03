@@ -1,0 +1,77 @@
+" :let a=1          # insert val
+" :unlet a          # delete val
+" :unlet! a         # delete val even if it doesn't exist
+"
+" scope --------------------------------------------------------------------------------
+" g:    global
+" b:    buffer-local
+" w:    window-local
+" t:    tabpage-local
+" s:    script-local
+" l:    function-local
+" v:    built-in-local
+" if skipped:
+"   v:  in case it's a built-in var
+"   l:  in case it exists in function
+"   g:  else
+"
+" option -------------------------------------------------------------------------------
+" set makeprg=g++\ hogehoge.cpp     # set option
+" set foo bar=                      # set 2~option !space separates options,
+" let &tabstop=8       # treats as vars (same: set tabstop=8)
+"
+" mode-key mapping ---------------------------------------------------------------------
+" [commands]        [normal]    [insert]    [command]   [visual]
+" map/noremap       o           -           -           o
+" nmap/nnoremap     o           -           -           -
+" imap/inoremap     -           o           -           -
+" cmap/cnoremap     -           -           o           -
+" vmap/vnoremap     -           -           -           o
+" map!/noremap!     -           o           o           -
+"
+" <silent> no output to cmd line
+" <unique> error if there's existing-mapping
+" <buffer> defines buffer-local keymap
+" <expr> mapped-string -> <vim eq> map <evaluated string>
+"
+" <CR> Enter
+" <lt> <
+"
+" auto-command ------------------------------------------------------------------------
+" exec in a specific case
+" autocmd FileType vim setlocal expandtab shiftwidth=2  # autocmd (Evt) (Case) (commands)
+"
+" autocmd Group definition
+"   augroup MyGroup
+"       autocmd!
+"       autocmd FileType vim setlocal expandtab shifwidth=2
+"   augroup END
+"
+"   delete autocmd
+"   autocmd!            # delete all
+"   autocmd! FileType   # delete FileType evt
+"   autocmd! * pat      # delete pat cmd
+"
+" source --------------------------
+" if filereadable(expand('~/.vimrc.local'))
+"   source ~/.vimrc.local
+" endif
+"
+" has -----------------------------
+" if has('gui_running')     # has('win32')->Windows has('win32unix')->Cygwin
+" endif
+"
+" hogehoge
+" \ hogehoge            # can use 2~line by putting \ at the beggining of next line
+"
+" help -----------------------------
+" :help option-list
+" :help map-commands
+" :help autocommand-events
+" :help feature-list
+"
+" }}}
+"
+" :s/m\(\d\+\)/s_{\1}/gc
+" :s/\\,//gc
+" :s/−/-/gc

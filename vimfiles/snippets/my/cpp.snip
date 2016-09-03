@@ -1,0 +1,330 @@
+snippet opencv
+    #include <iostream>
+    #include <opencv2/core/core.hpp>
+    #include <opencv2/imgproc/imgproc.hpp>
+    #include <opencv2/highgui/highgui.hpp>
+    int main() {
+        ${1:TARGET}
+        return 0;
+    }
+
+snippet cout
+    std::cout << ${1:"[STDOUT]"} << std::endl;
+snippet cerr
+    std::cerr << ${1:"[STDERR]"} << std::endl;
+
+snippet assert
+    assert(${1:condition-should-be-true} && "${2:message}")
+
+snippet utilfunc
+    std::vector<std::string> split(const std::string _s, const std::string del);
+    std::vector<double> loadFromLine(ifstream& file);
+    int toInt(std::string s) { int r = 0; istringstream ss(s); ss >> r; return r; }
+    double toDouble(std::string s) { double r = 0; istringstream ss(s); ss >> r; return r; }
+    std::string toStr(int n) { ostringstream ss; ss << n; return ss.str(); }
+    std::string dToStr(double n) { ostringstream ss; ss << n; return ss.str(); }
+
+snippet unused
+    #define UNUSED_VARIABLE(x) (void)(x)
+
+# c++11
+# snippet foreach
+#     for (const auto &${1:elem} : ${2:elements}) {
+#         ${3:TARGET}
+#     }
+
+snippet std::foreach
+    std::for_each( ${1:container}.begin(), $1.end(). []( int ${2:elem}) { std::cout << $2 << std::endl; } );
+
+snippet va_func
+    inline std::string ${1:function-name} (const char * fmt, ...) {
+        va_list ap;
+        const int sz = 65536;
+        char buf[sz];
+
+        va_start(ap, fmt);
+        int s = vsnprintf(buf, sz, fmt, ap);
+        va_end(ap);
+
+        assert( s < sz );
+
+        return buf;
+    }
+
+# boost-program-options
+
+
+# classdef
+
+snippet split
+    vector <string> split(const string _s, const string del)
+    {
+        vector <string> ret;
+        string s = _s;
+
+        while (!s.empty())
+        {
+            size_t pos = s.find(del);
+            string sub = "";
+            sub = s.substr(0, pos);
+            ret.push_back(sub);
+            if (pos != string::npos)
+            pos += del.size();
+            s.erase(0, pos);
+        }
+
+        return ret;
+    }
+
+snippet loader
+    //ifstream file(argv[1]);
+    vector<double> loadFromLine(ifstream& file){
+        string line;
+        getline(file, line);
+        vector<string> tmp  = split(line, " ");
+        vector<double> args;
+        for (uint i=0; i<tmp.size(); i++) args.push_back(toDouble(tmp[i]));
+        return args;
+    }
+
+
+
+
+# algorighm ==================================================================================
+snippet     foreach
+abbr        define
+options     head
+    #define FOREACH(v,s) for(const auto& v : s)
+    // FOREACH(v,s) std::cout << v << std::endl;
+
+snippet     find
+abbr        [iter]
+options     indent
+    find(${1:container}.begin(), $1.end(), ${2:finding-value});
+
+snippet     count
+abbr        [int]
+options     indent
+    count(${1:container}.begin(), $1.end(), ${2:target-element});
+
+snippet     equal
+abbr        [bool]
+options     indent
+    equal(${1:container}.begin(), $1.end(), ${2:compare-container}.begin());
+
+snippet     search
+abbr        [iter]
+options     indent
+    // v = { 1, 2, 3, 4, 5 }, w = { 3, 4 }
+    search(${1:container}.begin(), $1.end(), ${2:partial-container}.begin(), $2.end());
+
+snippet     replace
+abbr        [???]
+options     indent
+    // v = { 1, 2, 3, 2, 1 }
+    replace(${1:container}.begin(), $1.end(), ${2:target}, ${3:replace}); // v = { 1, 4, 3, 4, 1 }
+
+
+snippet     chofuku
+abbr        [iter] new end
+options     indent
+    // v = { 1, 1, 2, 2, 3, 3 }
+    v.erase(unique(${1:container}.begin(), $1.end()), $1.end()); // v = { 1, 2, 3 }
+
+snippet     random
+abbr        [???]
+options     indent
+    // v = { 1, 2, 3, 4, 5 }
+    random_shuffle(${1:ocntainer}.begin(), $1.end());
+
+snippet     lower
+abbr        [iter]
+options     indent
+    // v = { 1, 2, 2, 3, 3 }
+    lower_bound(${1:container}.begin(), $1.end(), 2); // v.begin() + 1
+    upper_bound($1.begin(), $1.end(), 2); // v.begin() + 3
+
+snippet     binary
+abbr        [iter]
+options     indent
+    binary_search(${1:container}.begin(), $1.end(), ${2:query});
+
+snippet     max-elem
+abbr        [iter]
+options     indent
+    // v = { 3, 5, 2, 4, 1 }
+    max_element(v.begin(), v.end());  // v.begin() + 1
+    *max_element(v.begin(), v.end()); // 5
+    max_element(v.begin(), v.end()) - v.begin(); // 1 (5のインデックス)
+
+# koujyun
+snippet     sort-k
+abbr        sort-greater(3 2 1)
+options     indent
+    sort(${1:container}.rbegin(), $1.rend());
+
+#syoujyun
+snippet     sort-s
+abbr        sort-smaller(1 2 3)
+options     indent
+    sort(${1:container}.begin(), $1,end());
+
+snippet     permutation
+abbr        next-prev-permutation
+options     indent
+    // v = { 1, 2, 3 }
+    do{
+      // v は ループごとに
+      //  { 1, 2, 3 }, { 1, 3, 2 },
+      //  { 2, 1, 3 }, { 2, 3, 1 },
+      //  { 3, 1, 2 }, { 3, 2, 1 }
+      // になっている。
+    }while(next_permutation(v.begin(), v.end()));
+    // ループ後は v = { 1, 2, 3 }
+
+    // 組み合わせを全部試したいときにも使える
+    // 3個中2個を選びたい場合は
+    // w = { 0, 1, 1 } としておき以下のように出来る。
+    do{
+      // w[i] = 1 ならば i 番目のものを選んでいる状態
+      // w[i] = 0 ならば i 番目のものは選んでいない状態
+    }while(next_permutation(w.begin(), w.end()));
+
+
+# numeric =====================================================================================
+snippet     sum
+abbr        go-kei
+options     indent
+    // v = { 1, 2, 3, 4, 5 }
+    // w = { "Competitive", "Programming", "Advent", "Calendar" }
+    accumulate(${1:container}.begin(), $1.end(), ${2:0[int]/0ll[long long]/string()[joint]});
+
+# functional
+#
+# Algorithmの関数に渡せるものが揃っています
+# 意味は名前の通りなので省略。
+#
+# 比較系
+#
+# equal_to, not_equal_to, greater, less, greater_equal, less_equal
+#
+# 演算系
+#
+# plus, minus, multiplies, divides, modulus, negate
+#
+# sort(v.begin(), v.end(), greater<int>()); // 降順ソート
+
+
+# procon
+snippet     header
+abbr        header-procon
+options     head
+    #include <sstream>
+    #include <string>
+    #include <vector>
+    #include <map>
+    #include <algorithm>
+    #include <numeric>
+    #include <iostream>
+    #include <cstdio>
+    #include <cstdlib>
+    #include <cmath>
+    #include <utility>
+    #include <set>
+    #include <cctype>
+    #include <queue>
+    #include <stack>
+    #include <fstream>
+    #include <cassert>
+
+snippet     util
+abbr        utilities
+options     head
+    int toInt(string s) { int r = 0; istringstream ss(s); ss >> r; return r; }
+    string toStr(int n) { ostringstream ss; ss << n; return ss.str(); }
+    string cToStr(char c) { ostringstream ss; ss << c; return ss.str(); }
+
+
+# procon
+snippet     gcj
+abbr        GCJ-Template
+options     head
+    #include <sstream>
+    #include <string>
+    #include <vector>
+    #include <map>
+    #include <algorithm>
+    #include <numeric>
+    #include <iostream>
+    #include <cstdio>
+    #include <cstdlib>
+    #include <cmath>
+    #include <utility>
+    #include <set>
+    #include <cctype>
+    #include <queue>
+    #include <stack>
+    #include <fstream>
+    #include <cassert>
+
+    using namespace std;
+
+    vector<string> split(const string _s, const string del);
+    vector<int> loadFromLine(ifstream& file);
+    int toInt(string s) { int r = 0; istringstream ss(s); ss >> r; return r; }
+    string toStr(int n) { ostringstream ss; ss << n; return ss.str(); }
+    string cToStr(char c) { ostringstream ss; ss << c; return ss.str(); }
+
+    string solve(vector<int> inputs)
+    {
+    }
+
+    int main(int argc, char ** argv)
+    {
+        assert(argc==2 && "Usage ./a.out <input file name>");
+
+        ifstream file(argv[1]);
+        int CASE_NUM = loadFromLine(file)[0];
+
+        for (int lineNum = 0; lineNum<CASE_NUM; lineNum++)
+        {
+            vector<int> inputs;
+            inputs = loadFromLine(file);
+
+            string result = solve(inputs);
+
+            cout << "Case #" << lineNum+1 << ":" << endl;
+            cout << result << endl;
+        }
+
+        return 0;
+    }
+
+    vector <string> split(const string _s, const string del)
+    {
+        vector <string> ret;
+        string s = _s;
+
+        while (!s.empty())
+        {
+            size_t pos = s.find(del);
+            string sub = "";
+            sub = s.substr(0, pos);
+            ret.push_back(sub);
+            if (pos != string::npos)
+            pos += del.size();
+            s.erase(0, pos);
+        }
+
+        return ret;
+    }
+
+    vector<int> loadFromLine(ifstream& file){
+        string line;
+        getline(file, line);
+        vector<string> tmp  = split(line, " ");
+        vector<int> args;
+        for (uint i=0; i<tmp.size(); i++) args.push_back(toInt(tmp[i]));
+        return args;
+    }
+

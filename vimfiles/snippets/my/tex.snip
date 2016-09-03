@@ -1,0 +1,44 @@
+snippet hogehoge
+    \documentclass[twocolumn,oneside,a4paper]{jarticle}
+
+    % \usepackage[dvipdfm]{graphicx}
+    \usepackage[dvipdfm]{graphicx}
+    \usepackage{amsmath,amssymb}
+
+    \title{ほげほげを用いたふがふが推定}
+    \author{へのへのもへじ}
+    \date{\today}
+
+
+    \begin{document}
+    \maketitle
+
+    \section{はじめに}
+    研究の大局的な目標，応用・社会的背景（何の役に立つのか，なぜこの研究を行う価値があるのか），本論文で取り組む具体的な問題（解くべき問題）は何か，どのようなアイデアがあるのか，を述べる．
+
+    ところでこの{\TeX}原稿は必ず文字コードをUTF-8 (Unicode) で作成し（改行コードは何でも可），PDFを作成するには「\verb+pdfplatex resume.tex+」とするか，もし\verb+pdfplatex+コマンドが存在しなければ「\verb+platex resume; dvipdfmx resume+」とする．また「LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.」のような警告が表示された場合は，上記のコマンドをもう一度実行する．
+
+
+    \section{関連研究}
+    本研究に関連する文献（似た問題に取り組んだ論文\cite{smith2013}\cite{yamada2013}など）を挙げて，それらと何が違うのか，どの点で優位性があるのか，を述べる．
+
+
+    \section{提案手法}
+    具体的なアルゴリズムについて述べる．
+
+
+    \section{評価実験}
+    どのような実験を行ったのか，そして「本研究の良さ」（既存の手法に対する優位性）をどのような尺度で評価して実証したのか，を述べる．
+
+
+    \section{結論}
+
+    \begin{thebibliography}{99}
+
+    \bibitem{smith2013} John Smith, ``Hogehoge by hoge filter'', ICCV, pp.1--8, 2013.
+    \bibitem{yamada2013} Taro Yamada, ``Fugafuga using fuga method'', CVPR, pp.124--129, 2013.
+
+    \end{thebibliography}
+
+
+    \end{document}

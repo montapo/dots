@@ -1,0 +1,30 @@
+snippet dumper
+    use Data::Dumper;
+    warn Dumper ${1}
+
+
+snippet new
+    sub new {
+        my $class = shift;
+        my $args = ref $_[0] ? $_[0] : +{@_};
+
+        ${1:code}
+
+        bless $args, $class;
+    }
+
+snippet grep
+    [ grep { $_->${2:value} } @$${1:arrays} ];
+
+snippet map
+    [ map { $_->${2:value} } @$${1:arrays} ];
+
+snippet for2
+    for (0..$num) {
+        $_
+    }
+
+snippet for
+    for my $${1} (@$$1) {
+        $1
+    }

@@ -1,0 +1,306 @@
+{{{ BASIC =======================================
+
+# これコメントおｋ
+product : main.o # これコメントだめ
+    gcc -o product main.o
+main.o : main.cpp
+    gcc -c main.cpp
+
+
+完成品(target): 材料A 材料B (dependent target)
+	作り方
+
+材料A: 材料
+	作り方
+
+材料B: 材料
+	作り方
+
+}}}
+
+{{{ MACRO LIST ================================================
+
+CC	コンパイルするプログラム	cc
+CXX	コンパイラするプログラム	g++
+RM	ファイルを削除するコマンド	rm -f
+CFLAGS	Cコンパイラに与える追加フラグを記述する。-Wallなど	なし
+CXXFLAGS	C++コンパイラに与える追加フラグを記述する	なし
+LDFLAGS	‘ld’というリンカを呼び出すコンパイラにリンク時に与える追加フラグ	なし
+
+TARGET	生成するプログラムの名前	プログラム名
+LIBS	リンクするライブラリを記述する	(ex: -lm)
+LIBS	LIBSと同じ。好み
+LOADLIBES	LDLIBSと同じ。好み
+INCDIR	インクルードディレクトリのパス	(ex: -I/xxx/xxx/include)
+INCLUDES	INCDIRと同じ。好み
+SRCS	ソースファイルを列挙する	(ex: main.cpp sub.cpp …)
+OBJS	SRCSマクロを置換マクロで.oにして使われる。	(ex: $(SRCS:.cpp=.o))
+AR	静的ライブラリを作る場合のコマンド。	ar
+ARFLAGS	arに渡すフラグなどを列挙する。	(ex: rv)
+
+}}}
+
+{{{ MACROS ======================================
+
+@, ^, <, *, (マクロ名:元の文字列=置換後の文字列)
+
+$@	ターゲット名
+$^	依存ターゲット名
+$<	依存ターゲットの先頭
+$*	ターゲットからサフィックス(※)を除いた名前
+$(マクロ名:A=B)	マクロ展開の際に文字列を置換
+※接尾辞。ここでは拡張子の意。
+
+CC = g++
+TARGET = getopt_test
+SRC = main.cpp
+
+# TARGETを作る
+$(TARGET): main.o
+    $(CC) -o $(TARGET) main.o
+    @echo --------------------------------
+    @echo ターゲット名：$@
+    @echo 依存ターゲット名：$^
+    @echo 依存ターゲットの先頭：$<
+    @echo ターゲットからサフィックスを除いた名前：$*
+    @echo マクロ展開の際に文字列を置換：$(SRC:.cpp=.o)
+    @echo TARGETを作りました
+    @echo --------------------------------
+
+# main.oを作る
+main.o: main.cpp
+    $(CC) -c main.cpp
+    @echo --------------------------------
+    @echo ターゲット名：$@
+    @echo 依存ターゲット名：$^
+    @echo 依存ターゲットの先頭：$<
+    @echo ターゲットからサフィックスを除いた名前：$*
+    @echo マクロ展開の際に文字列を置換：$(SRC:.cpp=.o)
+    @echo main.oを作りました
+    @echo --------------------------------
+g++ -c main.cpp
+--------------------------------
+ターゲット名：main.o
+依存ターゲット名：main.cpp
+依存ターゲットの先頭：main.cpp
+ターゲットからサフィックスを除いた名前：main
+マクロ展開の際に文字列を置換：main.o
+main.oを作りました
+--------------------------------
+g++ -o getopt_test main.o
+--------------------------------
+ターゲット名：getopt_test
+依存ターゲット名：main.o
+依存ターゲットの先頭：main.o
+ターゲットからサフィックスを除いた名前：
+マクロ展開の際に文字列を置換：main.o
+TARGETを作りました
+--------------------------------
+}}}
+
+{{{ STATIC OR DYNAMIC ? -------------------------------------------------------
+静的ライブラリ
+    実行前にモジュールが実行可能ファイルに結合
+    libname.a
+
+    % gcc -c error.c
+    % gcc -c util.c
+
+    % ar r libutil.a error.o util.o
+    % ranlib libutil.a
+
+    % gcc -o main main.c libutil.a
+
+    静的リンクだと実行可能バイナリの一部となる
+    ライブラリが変更されるとコンパイルしなおす
+    動的ライブラリなら別々
+    リンクの順番に注意
+
+動的ライブラリ
+    実行時./a.out にモジュールが実行可能ファイルに結合されるライブラリ
+    libname.so
+
+    $ gcc -shared shutil.c -o libshutil.so # .soできる
+    $ gcc shmain.c -o shmain ./libshutil.so
+    # .soファイル：名前の先頭にlibをつける必要がある
+
+    shared library
+    ----------------------------------------
+    //test.c
+    #include "test.h"
+    void test_func(){}
+
+    // test.h
+    #ifndf _TEST_H_
+    #define _TEST_H_
+    void test_func();
+    #endif
+
+    source file
+    ----------------------------------------
+    #include "test.h" ライブラリのヘッダをインクルードすればおｋ
+    int main(){ return 0; }
+
+    compile
+    ----------------------------------------
+    - header の場所
+    - shared library の場所
+    - shared library の名前
+    を指定しないとだめ
+    $ gcc -I./#headerの場所 -L./#sharedlibの場所 main.c -o main -ltest#sharedlibの名前
+
+    -Iオプション
+        インクルードファイルのディレクトリを指定
+        /xxx/xxx/include
+    -Lオプション
+        ライブラリファイルのディレクトリを追加指定
+    -lオプション
+        -Lとは違う
+        lで指定するライブラリファイルはLオプションで追加した
+        ディレクトリの中から検索される
+
+    ===============================================
+    include内にヘッダがあって
+    libs内のlibm.so libm.xx libm.yy が使いたいとき
+    $ g++ -I/xxx/include -c main.cpp # -c だとmain.oができる
+    $ g++ -o hoge main.o -L/xxx/libs -lm -xx -yy
+    ===============================================
+
+    xxxx.so: cannot open shared object file: No such file and directory
+    で、でたー
+
+    $ ldd a.out # 実行ファイルが使用する共有ライブラリを調べることができる
+    # 共有ライブラリの場所はLD_LIBRARY_PATH 環境変数に指定するのもおｋ
+    LD_LIBRARY_PATH=./ ./main
+
+    IとかLとかで与えてたやつは環境変数でもおｋ
+    C_INCLUDE_PATH      # C header fileの検索パス
+    CPLUS_INCLUDE_PATH  # C++ header fileの検索パス
+    LIBRARY_PATH        # compile時のライブラリの検索
+    LD_LIBRARY_PATH     # 動的ライブラリの検索パス
+
+    # 雑談
+    so.1 so.2 これはバージョン番号
+    .soを最新バージョンへのしんぼりにすることで適切なバージョンを使うようにしている
+
+}}}
+
+{{{ HEADEAR UPDATE =======================================================
+
+PROG := myapp
+SRCS := main.c foo.c
+OBJS := $(SRCS:%.c=%.o)
+
+CC := gcc
+all: $(PROG)
+
+$(PROG): $(OBJS)
+    $(CC) -o $@ $^
+$.o: %.c
+    $(CC) -c $<
+
+header 更新されてもmain.cたfoo.hに依存してなくてこまる
+main.o: main.c foo.h
+直接書く→できるけどやけいし
+
+全部の.cファイルの依存ヘッダがしりたいぞー
+コンパイラを使う -M option
+
+$ gcc -M foo.c
+foo.cが依存してるヘッダ全部　stdio.hがインクルードしてるのとかも全部
+
+$ gcc -MM foo.c
+システムヘッダdirにあるものは除外
+gcc-3.0 or former だと<>除外で""対象とかだった
+foo.o: foo.c foo.h
+
+$ gcc -MG foo.c 見つからなくてもエラーしない（ヘッダ自動生成されたときとか
+
+$ gcc -MD ついでにコンパイルしてくれる
+$ gcc -MMD MとMMといっしょ
+
+（結論）-MMD使う
+-MMDするとヘッダとの依存関係が.dファイルに出力される
+$ gcc -c -MMD hogehoge.c -> hogehoge.d
+
+PROG := myapp
+SRCS := main.c foo.c
+OBJS := $(SRCS:%.c=%.o)
+DEPS := $(SRCS:%.c=%.d)
+
+CC := gcc
+-include $(DEPS) # - つけないと最初の実行時.dないのでエラー
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+     $(CC) -o $@ $^
+
+%.o: %.c
+     $(CC) -c -MMD $<
+
+
+headerファイル削除する（rm foo.c, foo.h）と.dにfoo.h残ったままなのでエラー
+-MP使う
+
+依存するヘッダファイルを偽のターゲットとして追加する。foo.cに対して-MPなし、ありで実行した結果は以下のようになる。
+
+> gcc -MM foo.c
+foo.o: foo.c foo.h
+> gcc -MM -MP foo.c
+foo.o: foo.c foo.h
+
+foo.h:
+
+=================================================
+    PROG := myapp
+    SRCS := main.c foo.c
+    OBJS := $(SRCS:%.c=%.o)
+    DEPS := $(SRCS:%.c=%.d)
+
+    CC := gcc
+
+    all: $(PROG)
+
+    -include $(DEPS)
+
+    $(PROG): $(OBJS)
+            $(CC) -o $@ $^
+
+    %.o: %.c
+            $(CC) -c -MMD -MP $<
+
+    clean:
+            rm -f $(PROG) $(OBJS) $(DEPS)
+=================================================
+
+}}}
+
+{{{TEMPLATE ====================================================
+
+#
+# Makefile template
+#
+PROJ_ROOT = $(realpath ./../../..)
+
+TARGET      = hoge
+CC      = g++
+CXXFLAGS    =
+LDFLAGS     =
+INCDIR      = -I$(PROJ_ROOT)/include
+LIBDIR      = -L$(PROJ_ROOT)/lib
+LIBS        = -lpiyo
+
+SRCS        = main.cpp
+OBJS        = $(SRCS:.cpp=.o)
+
+$(TARGET): $(OBJS)
+    $(CC) $(LDFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
+
+.cpp.o:
+    $(CC) $(CXXFLAGS) -c $^ $(INCDIR)
+
+.PHONY: clean
+clean:
+    $(RM) $(TARGET) $(OBJS)
+}}}

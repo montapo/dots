@@ -1,0 +1,108 @@
+filetype plugin on
+filetype indent on
+set shellslash
+set grepprg=grep\ -nH\ $*
+let g:tex_flavor='platex'
+let g:Imap_UsePlaceHolders = 1
+let g:Imap_DeleteEmptyPlaceHolders = 1
+let g:Imap_StickyPlaceHolders = 0
+let g:Tex_DefaultTargetFormat = 'pdf'
+"let g:Tex_FormatDependency_pdf = 'pdf'
+let g:Tex_FormatDependency_pdf = 'dvi,pdf'
+"let g:Tex_FormatDependency_pdf = 'dvi,ps,pdf'
+let g:Tex_FormatDependency_ps = 'dvi,ps'
+"let g:Tex_CompileRule_pdf = 'ptex2pdf -l -ot "-synctex=1 -interaction=nonstopmode -file-line-error-style" $*'
+"let g:Tex_CompileRule_pdf = 'ptex2pdf -l -u -ot "-synctex=1 -interaction=nonstopmode -file-line-error-style" $*'
+"let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_pdf = 'lualatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_pdf = 'luajitlatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_pdf = 'xelatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+let g:Tex_CompileRule_pdf = 'dvipdfmx $*.dvi'
+"let g:Tex_CompileRule_pdf = 'ps2pdf $*.ps'
+let g:Tex_CompileRule_ps = 'dvips -Ppdf -o $*.ps $*.dvi'
+let g:Tex_CompileRule_dvi = 'platex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_dvi = 'uplatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+let g:Tex_BibtexFlavor = 'pbibtex'
+"let g:Tex_BibtexFlavor = 'upbibtex'
+"let g:Tex_BibtexFlavor = 'bibtex'
+"let g:Tex_BibtexFlavor = 'bibtexu'
+let g:Tex_MakeIndexFlavor = 'mendex $*.idx'
+"let g:Tex_MakeIndexFlavor = 'makeindex $*.idx'
+"let g:Tex_MakeIndexFlavor = 'texindy $*.idx'
+let g:Tex_UseEditorSettingInDVIViewer = 1
+let g:Tex_ViewRule_pdf = 'xdg-open'
+"let g:Tex_ViewRule_pdf = 'evince'
+"let g:Tex_ViewRule_pdf = 'okular --unique'
+"let g:Tex_ViewRule_pdf = 'zathura -s -x "vim --servername synctex -n --remote-silent +\%{line} \%{input}"'
+"let g:Tex_ViewRule_pdf = 'qpdfview --unique'
+"let g:Tex_ViewRule_pdf = 'pdfviewer'
+"let g:Tex_ViewRule_pdf = 'texworks'
+"let g:Tex_ViewRule_pdf = 'mupdf'
+"let g:Tex_ViewRule_pdf = 'firefox -new-window'
+"let g:Tex_ViewRule_pdf = 'chromium --new-window'
+"let g:Tex_ViewRule_pdf = 'acroread'
+"let g:Tex_ViewRule_pdf = 'pdfopen -viewer ar9-tab'
+
+" cheatsheet
+" :help latex-suit.text
+" :help latexhelp.text
+" :Tshortcuts [cmd]
+" SET ENV <F5>
+" INSERT MODE --------------
+" placeholder C-j
+"
+" ENVIRONMENT MAPPING
+" EIT itemize
+" EDE description
+" EEN enumerate
+" EVM verbatim
+" EEQ equation
+" ETE table
+" EFI figure
+"
+" SECTION MAPPING
+" SPA	\part{<++>}<++>
+" SCH	\chapter{<++>}<++>
+" SSE	\section{<++>}<++>
+" SSS	\subsection{<++>}<++>
+" SS2	\subsubsection{<++>}<++>
+" SPG	\paragraph{<++>}<++>
+" SSP	\subparagraph{<++>}<++>
+"
+" FONT MAPPING
+" FBF	\textbf{<++>}<++>
+" FRM	\textrm{<++>}<++>
+" FIT	\textit{<++>}<++>
+"
+" INSERT MODE
+" a-z : \alpha-\zeta
+" S : \Sigma
+"
+" COMPLETION : <F9>
+"
+" \rf: FOLD ALL
+"
+" COMPILE
+" :TTarget dvi
+" \ll .tex->.dvi
+" \lv preview .dvi
+"
+" :TTarget pdf
+" \ll .dvi -> .pdf
+" \lv preview .pdf
+"
+" BiBTeX
+" INSERT MODE
+" BBB
+" @BOOK{<+key+>,
+"    author = {<++>},
+"    editor = {<++>},
+"    title = {<++>},
+"    publisher = {<++>},
+"    year = {<++>},
+"    otherinfo = {<++>}
+"}<++>
+" BBB	essential field
+" BBL	BBB++
+" BBH	BBB+++
+" BBX	BBB+all

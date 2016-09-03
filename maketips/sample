@@ -1,0 +1,87 @@
+例
+==================================================================
+CC=g++
+LIB=
+LIBDIR=-L/opt/local/lib
+INCDIR=-I/opt/local/include
+CFLAGS=-Wall
+TARGETS=foo
+SRCS=foo.cpp
+OBJS=$(SRCS:.cpp=.o)
+
+all: $(TARGETS) $(OBJS)
+
+$(TARGETS): $(OBJS)
+        $(CC) $(LDFLAGS) -o $@ $(OBJS) $(INCDIR) $(LIBDIR) $(LIB)
+
+.cpp.o:
+        $(CC) $(CFLAGS) -c $< $(INCDIR) $(LIBDIR) $(LIB)
+
+.PHONY: clean
+clean:
+        $(RM) *~ $(TARGETS) $(OBJS)
+==================================================================
+
+基本
+
+target: source file(s)
+	commmnd
+targetを作るには、source file(s)が必要(targetはsoure filesに依存している)で、commandを実行することでtargetが作られる。例えば、
+
+foo.o: foo.c
+	cc -c foo.c
+また、command行の先頭は必ずtabでないといけない。
+
+このようなルールの集合からmakefileは成り立っている。また、これをより簡潔に記述するために、以下の機能が提供されている。
+
+phonyターゲット
+
+clean:
+	rm -f *~
+例えばこのように記述すると、コマンドラインでmake cleanとタイプすれば、ディレクトリ内の不要ファイルを削除できる。このようなファイルを生成せず、コマンドのみを実行するルールをphonyルールという。
+
+make clean
+
+上記のcleanの例だと、ディレクトリ内にcleanというファイルがあった場合、意図した動作にならない。よって以下のようにすると良い。
+
+.PHONY: clean
+clean:
+	rm -f *~
+マクロ
+
+$LIBDIR=-L/opt/local/lib
+このように変数のようにデータを格納し、
+
+$(LIBDIR)
+このように後で参照できる。
+
+Special Macros
+
+CC
+Cのコンパイラ。デフォルトはcc
+RM
+rm -f
+$@
+現在のターゲットのフルネーム
+$*
+現在のターゲットから拡張子を除いたもの
+$?
+依存ファイルのうち、更新があったもの
+$<
+先頭の依存ファイル
+マクロを置換して展開
+
+$(OBJS:.o=.c)
+この例はOBJS内の値の.oを.cに置換して展開する。
+
+サフィックスルール
+
+サフィックスルールを使うと、依存ファイルとターゲットの両方を拡張子で指定できる。まず以下のように対象の拡張子を登録し、
+
+.SUFFIXES: .foo .bar
+次のようにルールを記述する。
+
+.foo.bar:
+        command
+この例では.fooファイルから.barファイルを生成するルールを記述している。
+

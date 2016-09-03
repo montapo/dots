@@ -1,0 +1,29 @@
+[tig "bind"]
+  generic = g move-first-line
+  generic = G move-last-line
+[user]
+	name = montapo
+	email = tk.imai1125@gmail.com
+[color]
+	ui = auto
+	diff = auto
+	status = auto
+	branch = auto
+	grep = auto
+[url "git@repository.admin.h:/var/git/"]
+
+[core]
+	editor = vim
+[push]
+	default = current
+[alias]
+	st = status
+	co = checkout
+	ci = commit -v
+	di = diff
+	br = branch
+	puhs = push
+	psuh = push
+	pus = push
+	puh = push
+	pl = !git pull && git submodule update --init
